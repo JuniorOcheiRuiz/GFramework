@@ -42,24 +42,26 @@ func resolvePath(path string) (*regexp.Regexp, []Segment, error) {
 
 	matches := regexpSegment.FindStringSubmatch(path)
 
-	for _, match := range matches[1:] {
-		segment := Segment{}
+	if len(matches) > 1 {
+		for _, match := range matches[1:] {
+			segment := Segment{}
 
-		list(strings.Split(match, ":"), &match, &segment.Type)
+			list(strings.Split(match, ":"), &match, &segment.Type)
 
-		result := strings.Split(match, "?")
-		segment.Name = result[0]
-		segment.Required = len(result) == 1
-		segments = append(segments, segment)
-		_type := resolveTypeToRegex(segment.Type)
+			result := strings.Split(match, "?")
+			segment.Name = result[0]
+			segment.Required = len(result) == 1
+			segments = append(segments, segment)
+			_type := resolveTypeToRegex(segment.Type)
 
-		if segment.Required {
-			_type = _type + "+"
-		} else {
-			_type = _type + "*"
+			if segment.Required {
+				_type = _type + "+"
+			} else {
+				_type = _type + "*"
+			}
+
+			path = strings.Replace(path, match, "("+_type+")", -1)
 		}
-
-		path = strings.Replace(path, match, "("+_type+")", -1)
 	}
 
 	pathCompiled, err := regexp.Compile(path)

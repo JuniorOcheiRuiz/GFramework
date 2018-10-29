@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -8,6 +9,7 @@ import (
 
 type Router struct {
 	Server *http.Server
+	Routes []*Route
 }
 
 type RouterOptions struct {
@@ -32,16 +34,23 @@ func NewRouterFromServer(server *http.Server) *Router {
 	return router
 }
 
-func (r *Router) FindRouteByPath(path string) (*Route, map[string]interface{}) {
+func (r *Router) FindRouteByPath(path string) (*Route, RouteParams) {
+
+	for _, route := range r.Routes {
+		if isFound, params := route.Match(path); isFound {
+			return route, params
+		}
+	}
 
 	return nil, nil
 }
 
 func (r *Router) FindRouteByName(name string) *Route {
-	return nil
+	panic("FindRouteByName: Not implemented yet.")
 }
 
 func (r *Router) Run() {
 
+	fmt.Println("Servidor escuchando en el puerto " + r.Server.Addr)
 	log.Fatal(r.Server.ListenAndServe())
 }
