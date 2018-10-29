@@ -54,3 +54,24 @@ func (r *Router) Run() {
 	fmt.Println("Servidor escuchando en el puerto " + r.Server.Addr)
 	log.Fatal(r.Server.ListenAndServe())
 }
+
+/* These functions will be in RouteCollection */
+func (r *Router) AddRoute(route *Route) {
+	r.Routes = append(r.Routes, route)
+}
+
+func (r *Router) Match(methods []string, path string, handler RouteHandler) *Route {
+	route := NewRoute(methods, path, handler)
+	r.AddRoute(route)
+	return route
+}
+
+func (r *Router) Get(path string, handler RouteHandler) *Route {
+	return r.Match([]string{"GET"}, path, handler)
+}
+
+func (r *Router) Post(path string, handler RouteHandler) *Route {
+	return r.Match([]string{"POST"}, path, handler)
+}
+
+/* end RouteCollection */

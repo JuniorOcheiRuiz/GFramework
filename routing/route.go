@@ -12,6 +12,7 @@ type Route struct {
 	Pattern  *regexp.Regexp
 	Segments []Segment
 	Handler  RouteHandler
+	Name     string
 }
 
 type Segment struct {
@@ -63,6 +64,8 @@ func resolvePath(path string) (*regexp.Regexp, []Segment, error) {
 			path = strings.Replace(path, match, "("+_type+")", -1)
 		}
 	}
+
+	path = "^/" + strings.Trim(path, "/") + "$"
 
 	pathCompiled, err := regexp.Compile(path)
 
@@ -125,4 +128,19 @@ func (r *Route) Match(path string) (bool, RouteParams) {
 	}
 
 	return false, nil
+}
+
+func (r *Route) HasMethod(method string) bool {
+	for _, _method := range r.Methods {
+		if strings.ToUpper(_method) == strings.ToUpper(method) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (r *Route) SetName(name string) *Route {
+	r.Name = name
+	return r
 }
