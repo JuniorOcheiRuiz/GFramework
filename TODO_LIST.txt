@@ -1,0 +1,17 @@
+
+Routing
+- Add Middlewares
+- AutoRouting
+- Controllers
+    - AutoResolve methods params from RouteParams
+- Annotations
+
+HTTP
+- Request
+    - bodyparser(json, multipart, FormData,...)
+    - if isUpload then type UploadedFile(SaveAs(),...)
+    
+- Response
+    - ToJSON()
+    - ToStream()
+    - ToDownload()
