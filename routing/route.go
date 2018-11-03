@@ -2,6 +2,7 @@ package routing
 
 import (
 	"fmt"
+	"gframework/utils"
 	"regexp"
 	"strings"
 )
@@ -17,14 +18,7 @@ type Route struct {
 
 type RouteHandler func(*Context)
 
-// PHP's list()
-func list(arr []string, dest ...*string) {
-	for i := range dest {
-		if len(arr) > i {
-			*dest[i] = arr[i]
-		}
-	}
-}
+type RouteParams utils.Collection
 
 // resolvePath Resolve and compile the path of the route
 func resolvePath(path string) (*regexp.Regexp, []RouteSegment, error) {
@@ -52,7 +46,7 @@ func resolvePath(path string) (*regexp.Regexp, []RouteSegment, error) {
 			_tmp := strings.TrimLeft(match, "{")
 			_tmp = strings.TrimRight(_tmp, "}")
 
-			list(strings.Split(_tmp, ":"), &_tmp, &_type)
+			utils.List(strings.Split(_tmp, ":"), &_tmp, &_type)
 
 			// when we make split if the length is == 1 it means that not contains "?", so is required.
 			result := strings.Split(_tmp, "?")
