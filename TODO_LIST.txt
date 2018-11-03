@@ -1,17 +1,17 @@
 
 Routing
-- Add Middlewares
-- AutoRouting
-- Controllers
+- Add Middlewares - V0.2.0
+- Route grouping: router.Group() - V0.2.0
+- AutoRouting - Version undefined
+- Controllers - V0.2.0
     - AutoResolve methods params from RouteParams
-- Annotations
+- Annotations - Version undefined
 
 HTTP
 - Request
-    - bodyparser(json, multipart, FormData,...)
-    - if isUpload then type UploadedFile(SaveAs(),...)
+    - bodyparser(json, multipart, FormData,...) - V0.1.0
+    - Type UploadedFile - v0.1.0 
     
 - Response
-    - ToJSON()
-    - ToStream()
-    - ToDownload()
+    - WriteJSON() - V0.1.0
+    - Download() - V0.2.0

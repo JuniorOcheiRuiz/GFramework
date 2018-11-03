@@ -25,7 +25,7 @@ func (h *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			route.Handler(ctx)
 		} else {
 			ctx.Response.SetStatusCode(http.StatusMethodNotAllowed)
-			ctx.Response.WriteString("HTTP Method not allowed.")
+			_, _ = ctx.Response.WriteString("HTTP Method not allowed.")
 		}
 	} else {
 		http.NotFound(w, r)
