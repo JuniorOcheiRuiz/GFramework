@@ -16,14 +16,29 @@ type Route struct {
 }
 
 type Segment struct {
-	Name     string
-	Type     string
-	Required bool
+	Name       string
+	Type       string
+	Required   bool
+	Expression string
 }
 
 type RouteHandler func(*Context)
 
 type RouteParams map[string]interface{}
+
+func (r RouteParams) Has(name string) bool {
+	_, ok := r[name]
+
+	return ok
+}
+
+func (r RouteParams) Get(name string, _default interface{}) interface{} {
+	if r.Has(name) {
+		return r[name]
+	}
+
+	return _default
+}
 
 // PHP's list()
 func list(arr []string, dest ...*string) {
@@ -34,38 +49,46 @@ func list(arr []string, dest ...*string) {
 	}
 }
 
-// Resuelve y compila la path de la ruta
+// resolvePath Resolve and compile the path of the route
 func resolvePath(path string) (*regexp.Regexp, []Segment, error) {
 	var segments []Segment
-	regexpSegment := regexp.MustCompile("{([^}]+)}")
+	regexpSegment := regexp.MustCompile("({[^}]+})")
 
-	//{([a-zA-z_][a-zA-Z_0-9]+)(\??):?([^}$]+)}
+	/*
+		This pattern: {([a-zA-z_][a-zA-Z_0-9]+)(\??)(?(?=:):(.*)|())}
+		Get all parts of params in the following way:
+		[0] Full match
+		[1] Name
+		[2] Required
+		[3] Format([0-9], string, int,...)
 
-	matches := regexpSegment.FindStringSubmatch(path)
+		PHP understand the conditions But Golang still not support conditions in Regex expressions
+		I uploaded an example of this pattern here: https://regex101.com/r/F9PlVb/1
+	*/
+	matches := regexpSegment.FindAllString(path, -1)
 
-	if len(matches) > 1 {
-		for _, match := range matches[1:] {
+	if len(matches) > 0 {
+		fmt.Println(matches)
+		for _, match := range matches {
 			segment := Segment{}
+			_tmp := strings.TrimLeft(match, "{")
+			_tmp = strings.TrimRight(_tmp, "}")
 
-			list(strings.Split(match, ":"), &match, &segment.Type)
+			list(strings.Split(_tmp, ":"), &_tmp, &segment.Type)
 
-			result := strings.Split(match, "?")
+			result := strings.Split(_tmp, "?")
 			segment.Name = result[0]
 			segment.Required = len(result) == 1
 			segments = append(segments, segment)
-			_type := resolveTypeToRegex(segment.Type)
-
-			if segment.Required {
-				_type = _type + "+"
-			} else {
-				_type = _type + "*"
-			}
-
-			path = strings.Replace(path, match, "("+_type+")", -1)
+			expression := resolveSegmentTypeExpression(&segment)
+			path = strings.Replace(path, match, expression, -1)
+			//fmt.Println("Pattern segments: " + match)
 		}
 	}
 
 	path = "^/" + strings.Trim(path, "/") + "$"
+
+	// fmt.Println("Pattern: " + path)
 
 	pathCompiled, err := regexp.Compile(path)
 
@@ -76,22 +99,29 @@ func resolvePath(path string) (*regexp.Regexp, []Segment, error) {
 	return pathCompiled, segments, nil
 }
 
-func resolveTypeToRegex(_type string) string {
-	var value string
+func resolveSegmentTypeExpression(segment *Segment) string {
+	segment.Expression = "("
 
-	switch _type {
+	switch segment.Type {
 	case "int":
-		value = "[0-9]"
+		segment.Expression += "[0-9]"
 	case "string":
-		value = "[a-zA-z_]"
+		segment.Expression += "[a-zA-Z_]"
 	case "alpha":
-		value = "[a-zA-z_0-9]"
+		segment.Expression += "[a-zA-z_0-9]"
 	case "any":
 	default:
-		value = "."
+		segment.Type = "any"
+		segment.Expression += "[^\\/]"
 	}
 
-	return value
+	if segment.Required {
+		segment.Expression += "+)"
+	} else {
+		segment.Expression += "*)"
+	}
+
+	return segment.Expression
 }
 
 func NewRoute(methods []string, path string, handler RouteHandler) *Route {
