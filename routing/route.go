@@ -18,8 +18,6 @@ type Route struct {
 
 type RouteHandler func(*Context)
 
-type RouteParams utils.Collection
-
 // resolvePath Resolve and compile the path of the route
 func resolvePath(path string) (*regexp.Regexp, []RouteSegment, error) {
 	var segments []RouteSegment

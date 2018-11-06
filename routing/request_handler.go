@@ -15,7 +15,7 @@ func NewRequestHandler(router *Router) *RequestHandler {
 
 func (h *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := NewContext(w, r)
-	route, params := h.router.FindRouteByPath(ctx.Request.Url.Path)
+	route, params := h.router.FindRouteByPath(ctx.Request.URL.Path)
 	routeName := "N/A"
 
 	if route != nil {
@@ -31,5 +31,5 @@ func (h *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	}
 
-	fmt.Printf("%s %s status:%d route:%s \n", ctx.Request.Method, ctx.Request.Url.Path, ctx.Response.GetStatusCode(), routeName)
+	fmt.Printf("%s %s status:%d route:%s \n", ctx.Request.Method, ctx.Request.URL.Path, ctx.Response.GetStatusCode(), routeName)
 }
