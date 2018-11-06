@@ -2,6 +2,7 @@ package routing
 
 import (
 	"fmt"
+	_http "gframework/http"
 	"log"
 	"net/http"
 	"strconv"
@@ -34,7 +35,7 @@ func NewRouterFromServer(server *http.Server) *Router {
 	return router
 }
 
-func (r *Router) FindRouteByPath(path string) (*Route, RouteParams) {
+func (r *Router) FindRouteByPath(path string) (*Route, _http.UrlParams) {
 
 	for _, route := range r.Routes {
 		if isFound, params := route.Match(path); isFound {

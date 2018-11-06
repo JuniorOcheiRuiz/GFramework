@@ -2,6 +2,7 @@ package routing
 
 import (
 	"fmt"
+	_http "gframework/http"
 	"net/http"
 )
 
@@ -14,22 +15,24 @@ func NewRequestHandler(router *Router) *RequestHandler {
 }
 
 func (h *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx := NewContext(w, r)
-	route, params := h.router.FindRouteByPath(ctx.Request.URL.Path)
+	request := _http.NewRequest(r)
+	response := _http.NewResponse(w)
+
+	route, params := h.router.FindRouteByPath(request.URL.Path)
 	routeName := "N/A"
 
 	if route != nil {
 		routeName = route.Name
-		if route.HasMethod(ctx.Request.Method) {
-			ctx.Params = params
-			route.Handler(ctx)
+		if route.HasMethod(request.Method) {
+			request.Params = params
+			route.Handler(request, response)
 		} else {
-			ctx.Response.SetStatusCode(http.StatusMethodNotAllowed)
-			_, _ = ctx.Response.WriteString("HTTP Method not allowed.")
+			response.SetStatusCode(http.StatusMethodNotAllowed)
+			_, _ = response.WriteString("HTTP Method not allowed.")
 		}
 	} else {
 		http.NotFound(w, r)
 	}
 
-	fmt.Printf("%s %s status:%d route:%s \n", ctx.Request.Method, ctx.Request.URL.Path, ctx.Response.GetStatusCode(), routeName)
+	fmt.Printf("%s %s status:%d route:%s \n", request.Method, request.URL.Path, response.GetStatusCode(), routeName)
 }

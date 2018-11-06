@@ -2,6 +2,7 @@ package routing
 
 import (
 	"fmt"
+	"gframework/http"
 	"gframework/utils"
 	"regexp"
 	"strings"
@@ -16,7 +17,7 @@ type Route struct {
 	Name     string
 }
 
-type RouteHandler func(*Context)
+type RouteHandler func(*http.Request, *http.Response)
 
 // resolvePath Resolve and compile the path of the route
 func resolvePath(path string) (*regexp.Regexp, []RouteSegment, error) {
@@ -37,7 +38,6 @@ func resolvePath(path string) (*regexp.Regexp, []RouteSegment, error) {
 	matches := regexpSegment.FindAllString(path, -1)
 
 	if len(matches) > 0 {
-		fmt.Println(matches)
 		for _, match := range matches {
 			var name, _type string
 			var required bool
@@ -90,11 +90,11 @@ func NewRoute(methods []string, path string, handler RouteHandler) *Route {
 	return route
 }
 
-func (r *Route) Match(path string) (bool, RouteParams) {
+func (r *Route) Match(path string) (bool, http.UrlParams) {
 	matches := r.Pattern.FindStringSubmatch(path)
 
 	if matches != nil {
-		params := make(RouteParams)
+		params := make(http.UrlParams)
 
 		for index, match := range matches[1:] {
 			segment := r.Segments[index]

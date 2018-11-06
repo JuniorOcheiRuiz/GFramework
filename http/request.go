@@ -17,6 +17,7 @@ type Request struct {
 	Body          io.ReadCloser
 	Form          url.Values
 	MultipartForm *multipart.Form
+	Params        UrlParams
 }
 
 func NewRequest(r *http.Request) *Request {
