@@ -2,10 +2,11 @@ package routing
 
 import (
 	"fmt"
-	"gframework/http"
-	"gframework/utils"
 	"regexp"
 	"strings"
+
+	"github.com/juniorocheiruiz/gframework/http"
+	"github.com/juniorocheiruiz/gframework/utils"
 )
 
 type Route struct {

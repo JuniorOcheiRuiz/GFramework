@@ -11,8 +11,8 @@ package main
 
 import (
 	"fmt"
-	"gframework/http"
-	"gframework/routing"
+	"github.com/juniorocheiruiz/gframework/http"
+	"github.com/juniorocheiruiz/gframework/routing"
 )
 
 func main() {

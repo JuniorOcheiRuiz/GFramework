@@ -2,10 +2,11 @@ package routing
 
 import (
 	"fmt"
-	_http "gframework/http"
 	"log"
 	"net/http"
 	"strconv"
+
+	_http "github.com/juniorocheiruiz/gframework/http"
 )
 
 type Router struct {

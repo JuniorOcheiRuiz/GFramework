@@ -2,8 +2,9 @@ package routing
 
 import (
 	"fmt"
-	_http "gframework/http"
 	"net/http"
+
+	_http "github.com/juniorocheiruiz/gframework/http"
 )
 
 type RequestHandler struct {
