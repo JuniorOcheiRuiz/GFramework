@@ -3,7 +3,7 @@ GFramework is a Web Framework in Go and friendly for people coming from PHP Fram
 
 ## Quick Start
 #### Download and install
-    go get github.com/JuniorOcheiRuiz/GFramework
+    go get github.com/juniorocheiruiz/gframework
 
 #### Create a file for example call it 'main.go'
 ```go
