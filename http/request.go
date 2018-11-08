@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -52,4 +53,10 @@ func parseBodyRequest(request *Request) error {
 	}
 
 	return err
+}
+
+func (r *Request) ParseJSON(value interface{}) error {
+	decoder := json.NewDecoder(r.Body)
+
+	return decoder.Decode(value)
 }
