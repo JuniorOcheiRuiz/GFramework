@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 )
@@ -16,9 +15,8 @@ type Request struct {
 	Headers       http.Header
 	Query         url.Values
 	Body          io.ReadCloser
-	Form          url.Values
-	MultipartForm *multipart.Form
 	Params        UrlParams
+	UploadedFiles map[string][]*UploadedFile
 }
 
 func NewRequest(r *http.Request) *Request {
@@ -35,10 +33,22 @@ func NewRequest(r *http.Request) *Request {
 		fmt.Println("Error parsing the body request.", err)
 	}
 
-	request.Form = r.Form
-	request.MultipartForm = r.MultipartForm
+	parseMultipartForm(request)
 
 	return request
+}
+
+func parseMultipartForm(request *Request) {
+	for index, file := range request.RequestBase.MultipartForm.File {
+		var uploadedFiles []*UploadedFile
+
+		for _, fileHeader := range file {
+			uploadedFile := NewUploadFile(fileHeader)
+			uploadedFiles = append(uploadedFiles, uploadedFile)
+		}
+
+		request.UploadedFiles[index] = uploadedFiles
+	}
 }
 
 func parseBodyRequest(request *Request) error {
