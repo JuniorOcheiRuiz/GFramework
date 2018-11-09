@@ -12,11 +12,12 @@ type Request struct {
 	RequestBase   *http.Request
 	URL           *url.URL
 	Method        string
-	Headers       http.Header
+	Headers       *http.Header
 	Query         url.Values
 	Body          io.ReadCloser
 	Params        UrlParams
 	UploadedFiles map[string][]*UploadedFile
+	Inputs        *url.Values
 }
 
 func NewRequest(r *http.Request) *Request {
@@ -25,13 +26,15 @@ func NewRequest(r *http.Request) *Request {
 	request.Method = r.Method
 	request.Body = r.Body
 	request.Query = r.URL.Query()
-	request.Headers = r.Header
+	request.Headers = &r.Header
 
 	err := parseBodyRequest(request)
 
 	if err != nil {
 		fmt.Println("Error parsing the body request.", err)
 	}
+
+	request.Inputs = &r.Form
 
 	parseMultipartForm(request)
 
@@ -69,4 +72,8 @@ func (r *Request) ParseJSON(value interface{}) error {
 	decoder := json.NewDecoder(r.Body)
 
 	return decoder.Decode(value)
+}
+
+func (r *Request) GetInput(key string) string {
+	return r.RequestBase.FormValue(key)
 }
