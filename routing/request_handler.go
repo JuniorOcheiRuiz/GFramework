@@ -24,7 +24,7 @@ func (h *RequestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if route != nil {
 		routeName = route.Name
-		if route.HasMethod(request.Method) {
+		if route.HasMethod(HttpMethod(request.Method)) {
 			request.Params = params
 			route.Handler(request, response)
 		} else {

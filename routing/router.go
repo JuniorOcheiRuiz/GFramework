@@ -1,7 +1,6 @@
 package routing
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,8 +9,8 @@ import (
 )
 
 type Router struct {
+	RouteCollection
 	Server *http.Server
-	Routes []*Route
 }
 
 type RouterOptions struct {
@@ -22,7 +21,7 @@ type RouterOptions struct {
 func NewRouter(options *RouterOptions) *Router {
 	server := &http.Server{}
 	router := NewRouterFromServer(server)
-
+	//router.Routes = []*Route{}
 	// server configuration
 	server.Addr = ":" + strconv.Itoa(options.Port)
 	server.Handler = NewRequestHandler(router)
@@ -52,28 +51,6 @@ func (r *Router) FindRouteByName(name string) *Route {
 }
 
 func (r *Router) Run() {
-
-	fmt.Println("Servidor escuchando en el puerto " + r.Server.Addr)
+	println("Servidor escuchando en el puerto " + r.Server.Addr)
 	log.Fatal(r.Server.ListenAndServe())
 }
-
-/* These functions will be in RouteCollection */
-func (r *Router) AddRoute(route *Route) {
-	r.Routes = append(r.Routes, route)
-}
-
-func (r *Router) Match(methods []string, path string, handler RouteHandler) *Route {
-	route := NewRoute(methods, path, handler)
-	r.AddRoute(route)
-	return route
-}
-
-func (r *Router) Get(path string, handler RouteHandler) *Route {
-	return r.Match([]string{"GET"}, path, handler)
-}
-
-func (r *Router) Post(path string, handler RouteHandler) *Route {
-	return r.Match([]string{"POST"}, path, handler)
-}
-
-/* end RouteCollection */

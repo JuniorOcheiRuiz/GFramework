@@ -10,7 +10,7 @@ import (
 )
 
 type Route struct {
-	Methods  []string
+	Methods  []HttpMethod
 	Path     string
 	Pattern  *regexp.Regexp
 	Segments []RouteSegment
@@ -72,7 +72,7 @@ func resolvePath(path string) (*regexp.Regexp, []RouteSegment, error) {
 	return pathCompiled, segments, nil
 }
 
-func NewRoute(methods []string, path string, handler RouteHandler) *Route {
+func NewRoute(methods []HttpMethod, path string, handler RouteHandler) *Route {
 	route := &Route{}
 	route.Methods = methods
 	route.Path = path
@@ -108,9 +108,9 @@ func (r *Route) Match(path string) (bool, http.UrlParams) {
 	return false, nil
 }
 
-func (r *Route) HasMethod(method string) bool {
+func (r *Route) HasMethod(method HttpMethod) bool {
 	for _, _method := range r.Methods {
-		if strings.ToUpper(_method) == strings.ToUpper(method) {
+		if _method == method {
 			return true
 		}
 	}

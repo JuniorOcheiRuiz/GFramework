@@ -42,15 +42,17 @@ func NewRequest(r *http.Request) *Request {
 }
 
 func parseMultipartForm(request *Request) {
-	for index, file := range request.RequestBase.MultipartForm.File {
-		var uploadedFiles []*UploadedFile
+	if request.RequestBase.MultipartForm != nil {
+		for index, file := range request.RequestBase.MultipartForm.File {
+			uploadedFiles := []*UploadedFile{}
 
-		for _, fileHeader := range file {
-			uploadedFile := NewUploadFile(fileHeader)
-			uploadedFiles = append(uploadedFiles, uploadedFile)
+			for _, fileHeader := range file {
+				uploadedFile := NewUploadFile(fileHeader)
+				uploadedFiles = append(uploadedFiles, uploadedFile)
+			}
+
+			request.UploadedFiles[index] = uploadedFiles
 		}
-
-		request.UploadedFiles[index] = uploadedFiles
 	}
 }
 

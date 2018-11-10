@@ -6,6 +6,7 @@ Routing
 - Controllers - V0.2.0
     - AutoResolve methods params from RouteParams
 - Annotations - Version undefined
+- Add Router Methods: GET, POST, PUT, HEAD, etc.
 
 HTTP
 - Request
