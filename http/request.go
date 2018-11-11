@@ -36,8 +36,6 @@ func NewRequest(r *http.Request) *Request {
 
 	request.Inputs = &r.Form
 
-	parseMultipartForm(request)
-
 	return request
 }
 
@@ -65,6 +63,7 @@ func parseBodyRequest(request *Request) error {
 		err = request.RequestBase.ParseForm()
 	case "multipart/form-data":
 		err = request.RequestBase.ParseMultipartForm(0)
+		parseMultipartForm(request)
 	}
 
 	return err
