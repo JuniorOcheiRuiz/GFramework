@@ -59,7 +59,8 @@ func main() {
 
 		response.WriteString(fmt.Sprintf("%s - %d", name, age))
 	}).SetName("user")
-
+	
+	// Parsing JSON
 	router.Post("/json", func(request *http.Request, response *http.Response) {
 		/*
 			json:
@@ -99,7 +100,8 @@ func main() {
 		}
 
 	}).SetName("json")
-
+	
+	// Saving a file
 	router.Post("/file", func(request *http.Request, response *http.Response) {
 		files := request.UploadedFiles["image_logo"]
 
